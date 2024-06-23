@@ -2,6 +2,8 @@ import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackContext
 import requests
+from dotenv import load_dotenv
+import os
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -9,7 +11,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Определяем функцию поиска
+# ================================================================
+
+load_dotenv()
+
+bot_token = os.getenv("TG_TOKEN")
+
+# ================================================================
+
 def search_anime(query):
     api_url = "https://api.anilibria.tv/v2/searchTitles"
     params = {
@@ -48,15 +57,15 @@ async def search(update: Update, context: CallbackContext) -> None:
     await update.message.reply_html(result)
 
 def main() -> None:
-    BOT_TOKEN = '7423699398:AAFj8cmDuL8oCWAAUqO-oSPvCcT2zR1dFzQ'
+    BOT_TOKEN = f'{bot_token}'
 
-    # Создаем приложение
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app = ApplicationBuilder().token(BOT_TOKEN).build() 
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("search", search))
 
     app.run_polling()
+
 
 if __name__ == '__main__':
     main()
